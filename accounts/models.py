@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from .constants import ACCOUNT_TYPE, GENDER_TYPE
 
-# Create your models here.
-
 
 class UserBankAccount(models.Model):
     user = models.OneToOneField(
@@ -26,6 +24,15 @@ class UserAddress(models.Model):
     street_address = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     postal_code = models.IntegerField()
+
+    def __str__(self):
+        return self.user.email
+
+
+class UserShareMoney(models.Model):
+    account_id = models.IntegerField(unique=True)
+    share_money = models.DecimalField(
+        default=0, max_digits=12, decimal_places=2)
 
     def __str__(self):
         return self.user.email

@@ -64,6 +64,32 @@ class WithdrawForm(TransactionForm):
         return amount
 
 
+# class ShareMoneyForm(forms.Form):
+#     account_no = forms.IntegerField()
+#     share_money = forms.DecimalField(max_digits=12, decimal_places=2)
+
+#     def clean_account_no(self):
+#         account_no = self.cleaned_data['account_no']
+#         return account_no
+
+#     def clean_share_money(self):
+#         share_money = self.cleaned_data['share_money']
+#         return share_money
+
+class ShareMoneyForm(forms.Form):
+    amount = forms.DecimalField(
+        max_digits=12, decimal_places=2, label='Amount')
+    receiver_account_number = forms.CharField(
+        max_length=20, label='Receiver Account Number')
+
+    def clean_amount(self):
+        amount = self.cleaned_data['amount']
+        return amount
+
+    def clean_receiver_account_number(self):
+        return receiver_account_number
+
+
 class LoanRequestForm(TransactionForm):
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
