@@ -97,40 +97,6 @@ class TransactionCreateMixin(LoginRequiredMixin, CreateView):
 #         form.add_error(None, "Insufficient balance")
 #         return self.form_invalid(form)
 
-# class ShareMoneyView(LoginRequiredMixin, CreateView):
-    template_name = 'transactions/share_money.html'
-    title = 'share money'
-    success_url = reverse_lazy('home')
-    form_class = ShareMoneyForm
-
-    def form_valid(self, form):
-        receiver_account_id = form.cleaned_data['account_no']
-        amount_to_transfer = form.cleaned_data['share_money']
-
-        sender_user = self.request.user
-        # Assuming the account is associated with a user
-        sender_account = sender_user.account
-
-        # Retrieve receiver's account
-        receiver_user = get_object_or_404(
-            User, account__id=receiver_account_id)
-        receiver_account = receiver_user.account
-
-        # Perform the money transfer
-        if sender_account.balance >= amount_to_transfer:
-            sender_account.balance -= amount_to_transfer
-            receiver_account.balance += amount_to_transfer
-
-            sender_account.save()
-            receiver_account.save()
-
-            # Redirect to success URL after successful transfer
-            return HttpResponseRedirect(self.get_success_url())
-
-        # If the sender does not have sufficient balance
-        form.add_error(None, "Insufficient balance")
-        return self.form_invalid(form)
-
 
 class ShareMoneyView(TransactionCreateMixin):
     template_name = 'transactions/share_money.html'
@@ -156,6 +122,14 @@ class ShareMoneyView(TransactionCreateMixin):
 
             sender_account.save()
             receiver_account.save()
+
+            send_transaction_email(
+                self.request.user,
+                self.request.user.email,
+                amount,
+                'Deposit Money Notification',
+                'transactions/deposite_email.html'
+            )
 
             return super().form_valid(form)
         else:

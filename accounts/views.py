@@ -5,7 +5,6 @@ from django.contrib.auth import login, logout
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LogoutView, LoginView
 from django.views import View
-# Create your views here.
 
 
 class UserRegistationView(FormView):
